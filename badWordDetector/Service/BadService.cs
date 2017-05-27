@@ -1,4 +1,5 @@
-﻿using System;
+﻿using badWordDetector.Model;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -21,17 +22,17 @@ namespace badWordDetector.Service
             BadList = tr.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
         }
 
-        public List<Tuple<int, int>> BadWordsDetails(string input)
+        public List<BadWordInfo> BadWordsDetails(string input)
         {
             if (input != null && OnlyAlphaRegex.IsMatch(input))
             {
-                List<Tuple<int, int>> indexList = new List<Tuple<int, int>>();
+                List<BadWordInfo> indexList = new List<BadWordInfo>();
                 BadList.ForEach(bad =>
                 {
                     var badMatch = Regex.Match(input, @"\b" + bad + @"\b", RegexOptions.IgnoreCase);
                     while (badMatch.Success)
                     {
-                        indexList.Add(new Tuple<int, int>(badMatch.Index, bad.Length));
+                        indexList.Add(new BadWordInfo(badMatch.Index, bad.Length));
                         badMatch = badMatch.NextMatch();
                     }
 

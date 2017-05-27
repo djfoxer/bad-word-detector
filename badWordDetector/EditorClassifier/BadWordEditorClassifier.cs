@@ -65,7 +65,8 @@ namespace badWordDetector.EditorClassifier
             {
                 badDetails.ForEach(x =>
                 {
-                    result.Add(new ClassificationSpan(new SnapshotSpan(span.Snapshot, (span.Span.Start + x.Item1), x.Item2), this.classificationType));
+                    result.Add(new ClassificationSpan(new SnapshotSpan(span.Snapshot,
+                        (span.Span.Start + x.StartIndex), x.Length), this.classificationType));
                 });
             }
             return result;
