@@ -1,6 +1,7 @@
 ﻿using badWordDetector.Model;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,8 @@ namespace badWordDetector.Service
         private void LoadBadList()
         {
             TextReader tr = File.OpenText("./Data/bad.en.txt");
-            BadList = tr.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var badList = tr.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            BadListRegex = badList.Select(bad => new Regex(@"\b" + bad + @"\b", RegexOptions.IgnoreCase | RegexOptions.Compiled)).ToList();
         }
 
         public List<BadWordInfo> BadWordsDetails(string input)
@@ -27,12 +29,12 @@ namespace badWordDetector.Service
             if (input != null && OnlyAlphaRegex.IsMatch(input))
             {
                 List<BadWordInfo> indexList = new List<BadWordInfo>();
-                BadList.ForEach(bad =>
+                BadListRegex.ForEach(badRegex =>
                 {
-                    var badMatch = Regex.Match(input, @"\b" + bad + @"\b", RegexOptions.IgnoreCase);
+                    var badMatch = badRegex.Match(input);
                     while (badMatch.Success)
                     {
-                        indexList.Add(new BadWordInfo(badMatch.Index, bad.Length));
+                        indexList.Add(new BadWordInfo(badMatch.Index, badMatch.Length));
                         badMatch = badMatch.NextMatch();
                     }
 
@@ -44,7 +46,7 @@ namespace badWordDetector.Service
 
         private Regex OnlyAlphaRegex = new Regex(@"[a-zA-Z]", RegexOptions.Compiled);
 
-        private List<string> BadList { get; set; }
+        private List<Regex> BadListRegex { get; set; }
 
         private static BadService _service { get; set; }
 
