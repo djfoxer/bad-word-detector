@@ -12,20 +12,30 @@ namespace badWordDetector.Service
 {
     public class BadService
     {
-        private BadService()
+        private void InitBadService()
         {
-            LoadBadList();
+            BadListRegex = new List<Regex>();
+            if (EnableEnglishBadList)
+                LoadBadList("en");
+            if (EnablePolishBadList)
+                LoadBadList("pl");
         }
 
-        private void LoadBadList()
+        private void LoadBadList(string languageCode)
         {
-            TextReader tr = File.OpenText("./Data/bad.en.txt");
+
+            TextReader tr = File.OpenText("./Data/bad." + languageCode + ".txt");
             var badList = tr.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
-            BadListRegex = badList.Select(bad => new Regex(@"\b" + bad + @"\b", RegexOptions.IgnoreCase | RegexOptions.Compiled)).ToList();
+            BadListRegex.AddRange(badList.Select(bad => new Regex(@"\b" + bad + @"\b", RegexOptions.IgnoreCase | RegexOptions.Compiled)));
         }
 
         public List<BadWordInfo> BadWordsDetails(string input)
         {
+            if (BadListRegex == null)
+            {
+                InitBadService();
+            }
+
             if (input != null && OnlyAlphaRegex.IsMatch(input))
             {
                 List<BadWordInfo> indexList = new List<BadWordInfo>();
@@ -61,5 +71,9 @@ namespace badWordDetector.Service
                 return _service;
             }
         }
+
+        public bool EnablePolishBadList { get; set; }
+
+        public bool EnableEnglishBadList { get; set; }
     }
 }
