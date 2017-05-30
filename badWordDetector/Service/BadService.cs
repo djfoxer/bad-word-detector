@@ -1,4 +1,5 @@
-﻿using badWordDetector.Model;
+﻿using badWordDetector.Helper;
+using badWordDetector.Model;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,43 +13,50 @@ namespace badWordDetector.Service
 {
     public class BadService
     {
-        private void InitBadService()
+        private BadService()
         {
-            BadListRegex = new List<Regex>();
-            if (EnableEnglishBadList)
-                LoadBadList("en");
-            if (EnablePolishBadList)
-                LoadBadList("pl");
+            BadRegexData = new Dictionary<LanguageEnum, RegexInfo>();
+            foreach (var lang in Enum.GetValues(typeof(LanguageEnum)).Cast<LanguageEnum>())
+            {
+                LoadBadList(lang);
+            }
         }
 
-        private void LoadBadList(string languageCode)
+        private void LoadBadList(LanguageEnum language)
         {
-
-            TextReader tr = File.OpenText("./Data/bad." + languageCode + ".txt");
-            var badList = tr.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
-            BadListRegex.AddRange(badList.Select(bad => new Regex(@"\b" + bad + @"\b", RegexOptions.IgnoreCase | RegexOptions.Compiled)));
+            if (!BadRegexData.ContainsKey(language))
+            {
+                TextReader tr = File.OpenText("./Data/bad." + (int)language + ".txt");
+                var badList = tr.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                BadRegexData.Add(language, new RegexInfo() { IsActive = false, Regex = badList.Select(bad => new Regex(@"\b" + bad + @"\b", RegexOptions.IgnoreCase | RegexOptions.Compiled)).ToList() });
+            }
         }
 
         public List<BadWordInfo> BadWordsDetails(string input)
         {
-            if (BadListRegex == null)
-            {
-                InitBadService();
-            }
-
             if (input != null && OnlyAlphaRegex.IsMatch(input))
             {
                 List<BadWordInfo> indexList = new List<BadWordInfo>();
-                BadListRegex.ForEach(badRegex =>
+                foreach (var lang in Enum.GetValues(typeof(LanguageEnum)).Cast<LanguageEnum>())
                 {
-                    var badMatch = badRegex.Match(input);
-                    while (badMatch.Success)
+                    if (BadRegexData.ContainsKey(lang))
                     {
-                        indexList.Add(new BadWordInfo(badMatch.Index, badMatch.Length));
-                        badMatch = badMatch.NextMatch();
-                    }
+                        var regexInfo = BadRegexData[lang];
+                        if (regexInfo.IsActive)
+                        {
+                            regexInfo.Regex.ForEach(badRegex =>
+                            {
+                                var badMatch = badRegex.Match(input);
+                                while (badMatch.Success)
+                                {
+                                    indexList.Add(new BadWordInfo(badMatch.Index, badMatch.Length));
+                                    badMatch = badMatch.NextMatch();
+                                }
 
-                });
+                            });
+                        }
+                    }
+                }
                 return indexList.Any() ? indexList : null;
             }
             return null;
@@ -56,7 +64,7 @@ namespace badWordDetector.Service
 
         private Regex OnlyAlphaRegex = new Regex(@"[a-zA-Z]", RegexOptions.Compiled);
 
-        private List<Regex> BadListRegex { get; set; }
+        private Dictionary<LanguageEnum, RegexInfo> BadRegexData { get; set; }
 
         private static BadService _service { get; set; }
 
@@ -72,8 +80,9 @@ namespace badWordDetector.Service
             }
         }
 
-        public bool EnablePolishBadList { get; set; }
-
-        public bool EnableEnglishBadList { get; set; }
+        public void SetLanguageCheckActive(LanguageEnum language, bool isActive)
+        {
+            BadRegexData[language].IsActive = isActive;
+        }
     }
 }

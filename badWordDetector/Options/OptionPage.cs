@@ -28,7 +28,7 @@ namespace badWordDetector.Options
             set
             {
                 _EnablePolishBadList = value;
-                BadService.Instance.EnablePolishBadList = value;
+                BadService.Instance.SetLanguageCheckActive(Model.LanguageEnum.Polish, value);
             }
         }
 
@@ -42,7 +42,7 @@ namespace badWordDetector.Options
             set
             {
                 _EnableEnglishBadList = value;
-                BadService.Instance.EnableEnglishBadList = value;
+                BadService.Instance.SetLanguageCheckActive(Model.LanguageEnum.English, value);
             }
         }
     }

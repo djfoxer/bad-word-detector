@@ -57,6 +57,8 @@
     <Compile Include="EditorClassifier\BadWordEditorClassifierProvider.cs" />
     <Compile Include="Helper\Consts.cs" />
     <Compile Include="Model\BadWordInfo.cs" />
+    <Compile Include="Model\LanguageEnum.cs" />
+    <Compile Include="Model\RegexInfo.cs" />
     <Compile Include="Options\OptionPage.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -72,11 +74,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Data\bad.en.txt">
+    <Content Include="Data\bad.0.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Data\bad.pl.txt">
+    <Content Include="Data\bad.1.txt">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

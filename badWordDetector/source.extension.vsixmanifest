@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="badWordDetector.djfoxer.5958065d-bdc8-4414-9951-fafd210cda9b" Version="1.2" Language="en-US" Publisher="djfoxer" />
+    <Identity Id="badWordDetector.djfoxer.5958065d-bdc8-4414-9951-fafd210cda9b" Version="1.3" Language="en-US" Publisher="djfoxer" />
     <DisplayName>Bad Word Detector</DisplayName>
-    <Description xml:space="preserve">Bad Words Detector</Description>
+    <Description xml:space="preserve">Bad Word Detector highlight vulgarism in code editor</Description>
     <Icon>Misc\dislike.png</Icon>
   </Metadata>
   <Installation>

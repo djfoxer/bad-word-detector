@@ -63,9 +63,9 @@ namespace badWordDetector.Options
             // not sited yet inside Visual Studio environment. The place to do all the other
             // initialization is the Initialize method.
 
-           
 
-           
+
+
         }
 
         #region Package Members
@@ -77,8 +77,8 @@ namespace badWordDetector.Options
         protected override void Initialize()
         {
             base.Initialize();
-            BadService.Instance.EnablePolishBadList = ((OptionPage)GetDialogPage(typeof(OptionPage))).EnablePolishBadList;
-            BadService.Instance.EnableEnglishBadList = ((OptionPage)GetDialogPage(typeof(OptionPage))).EnablePolishBadList;
+            BadService.Instance.SetLanguageCheckActive(Model.LanguageEnum.Polish, ((OptionPage)GetDialogPage(typeof(OptionPage))).EnablePolishBadList);
+            BadService.Instance.SetLanguageCheckActive(Model.LanguageEnum.English, ((OptionPage)GetDialogPage(typeof(OptionPage))).EnableEnglishBadList);
         }
 
         #endregion
