@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -26,7 +27,7 @@ namespace badWordDetector.Service
         {
             if (!BadRegexData.ContainsKey(language))
             {
-                TextReader tr = File.OpenText("./Data/bad." + (int)language + ".txt");
+                TextReader tr = File.OpenText(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data", $"bad.{(int)language}.txt"));
                 var badList = tr.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
                 BadRegexData.Add(language, new RegexInfo() { IsActive = false, Regex = badList.Select(bad => new Regex(@"\b" + bad + @"\b", RegexOptions.IgnoreCase | RegexOptions.Compiled)).ToList() });
             }
